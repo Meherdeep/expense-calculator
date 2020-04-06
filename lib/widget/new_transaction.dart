@@ -12,17 +12,29 @@ class NewTransaction extends StatefulWidget {
 class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
-  var selectedDate = TextEditingController();
+  DateTime selectedDate;
 
   void submitData(){
     final expenseTitle = titleController.text;
     final expenseAmount = double.parse(amountController.text);
     
-    if (expenseTitle.isEmpty || expenseAmount<0) {
+    if (expenseTitle.isEmpty || expenseAmount<0 || selectedDate==null) {
       return;
     } 
-    widget.addTx(expenseTitle, expenseAmount);
+    widget.addTx(expenseTitle, expenseAmount, selectedDate);
     Navigator.of(context).pop();
+  }
+  void submitDate(){
+    showDatePicker(
+      context: context, initialDate: DateTime.now(), firstDate: DateTime(1998), lastDate: DateTime.now()
+      ).then((pickedDate){
+        if (pickedDate == null) {
+          return;
+        }
+        setState(() {
+          selectedDate = pickedDate;  
+        });
+      });
   }
 
   @override
@@ -74,38 +86,23 @@ class _NewTransactionState extends State<NewTransaction> {
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                  TextField(
-                    autofocus: false,
-                    //keyboardType: TextInputType.datetime,
-                    onTap: (){
-                      showDatePicker(
-                        context: context, 
-                        initialDate: DateTime.now(), 
-                        firstDate: DateTime(1998), 
-                        lastDate: DateTime.now()
-                      ).then((pickedDate) {
-                        if(pickedDate == null){
-                          return;
-                        }
-                        setState(() {
-                          selectedDate = pickedDate as TextEditingController;  
-                        });
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Date',
-                      hintText: 'dd/mm/yyyy',
-                      focusColor: Colors.blue,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                          width: 3,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(icon: Icon(Icons.calendar_today), onPressed: submitDate),
+                      Container(
+                        width: 335,
+                        height: 60,
+                        padding: EdgeInsets.only(left: 10,top: 20),
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1, color: Colors.black38),
+                          borderRadius: BorderRadius.circular(18),
                         ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    icon: Icon(Icons.calendar_today),
-                  ),
-                  controller: selectedDate,
+                        child: Text(selectedDate == null ? 'dd/mm/yyyy' : DateFormat.yMd().format(selectedDate),
+                        textAlign: TextAlign.justify,
+                        style: selectedDate == null ? TextStyle(color: Colors.black38, fontSize: 15,) : TextStyle(color: Colors.black, fontSize: 17),),
+                      )
+                    ],
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                   FlatButton(
