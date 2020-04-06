@@ -40,7 +40,6 @@ class _NewTransactionState extends State<NewTransaction> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      
             elevation: 5,
             child: Container(
               padding: EdgeInsets.all(10),
@@ -82,6 +81,7 @@ class _NewTransactionState extends State<NewTransaction> {
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      
                       icon: Icon(Icons.attach_money),
                     ),
                   ),
